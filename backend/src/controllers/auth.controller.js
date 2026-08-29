@@ -41,8 +41,8 @@ async function registerUserController (req,res) {
 
          const cookieOptions = {
             httpOnly: true, 
-            secure: process.env.NODE_ENV === 'production', 
-            sameSite: 'strict', 
+            secure: false, 
+            sameSite: 'lax', 
             maxAge: 24 * 60 * 60 * 1000 
         };
 
@@ -103,8 +103,8 @@ async function loginUserController(req, res) {
         
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', 
-            sameSite: 'strict',
+            secure: false, 
+            sameSite: 'lax',
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         };
 
