@@ -127,4 +127,32 @@ async function loginUserController(req, res) {
     }
 }
 
-module.exports = {registerUserController,loginUserController};
+
+async function getMeController(req, res) {
+    try {
+        // 1. req.user.id comes directly from your auth middleware
+        const user = await userModel.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        // 2. Return user profile (password is automatically excluded by the schema setting)
+        return res.status(200).json({
+            success: true,
+            user
+        });
+
+    } catch (error) {
+        console.error("Get Me controller error: ", error);
+        return res.status(500).json({
+            message: "Internal Server error"
+        });
+    }
+}
+
+
+
+module.exports = {registerUserController,loginUserController,getMeController};
