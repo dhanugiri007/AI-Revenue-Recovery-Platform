@@ -12,6 +12,15 @@ async function createCustomer(req,res) {
             })
         }
 
+        const ifExists = await customerModel.findOne({
+            email
+        })
+
+        if(ifExists) {
+            return res.status(400).json({
+                message: 'Customer already exists'
+            })
+        }
         const userId = req.user.id;
 
         const customer = await customerModel.create({
@@ -49,25 +58,22 @@ async function getAllCustomer(req,res) {
    }
 }
 
-async function getCustomer (req,res) {
+
+async function deleteCustomer (req,res) {
     try {
-        const id = req.params.id? req.params.id.trim():null;
+    const { id } = req.params;
+    const deletedItem = await Item.findByIdAndDelete(id);
 
-
-        const customer = await customerModel.findById(id);
-        return res.status(200).json({
-            message: 'succesfully got the customer',
-            customer
-        });
-
-
-    }catch(error) {
-        console.log("Fetching customer error ", error);
-        return res.status(500).json({
-            message: 'internal server error',
-            
-        });
+    if (!deletedItem) {
+      return res.status(404).json({ message: 'Item not found' });
     }
-}
 
-module.exports = {createCustomer,getAllCustomer,getCustomer}
+    res.status(200).json({ message: 'Item deleted successfully', id });
+  } catch (error) {
+    console.log('customer delete error :', error);
+    res.status(500).json({
+        message : 'internal server error'
+    })
+  }
+}
+module.exports = {createCustomer,getAllCustomer,deleteCustomer}

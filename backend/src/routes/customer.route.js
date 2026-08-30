@@ -8,6 +8,6 @@ const router = express();
 
 router.post('/create-customer',authMiddleware.protect,customerController.createCustomer);
 router.get('/get-customers',authMiddleware.protect,customerController.getAllCustomer);
-router.get('/get-customer/:id', authMiddleware.protect, customerController.getCustomer);
+router.delete('delete-customer',authMiddleware.protect, customerController.deleteCustomer);
 
 module.exports = router;
