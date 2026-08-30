@@ -8,9 +8,10 @@ export const CustomerProvider = ({children}) => {
     const [loading, setloading] = useState(false);
     const [customer,setcustomer] = useState(null);
     const [customers,setCustomers] = useState([]);
+    const [payments, setPayments] = useState([]);
     
     return (
-        <CustomerContext.Provider value={({loading,setloading,customer,setcustomer,customers,setCustomers})}>
+        <CustomerContext.Provider value={({loading,setloading,customer,setcustomer,customers,setCustomers,payments,setPayments})}>
             {children}
         </CustomerContext.Provider>
     )

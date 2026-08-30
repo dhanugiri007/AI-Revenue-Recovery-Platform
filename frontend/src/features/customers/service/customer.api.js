@@ -28,3 +28,15 @@ export async function getCustomers() {
         console.log(error);
     }
 }
+
+
+export async function getPayments(customerId) {
+    try {
+        const response = await api.get(`/api/customer/get-customer-payments/${customerId}`);
+
+        return response.data;
+
+    }catch(err) {
+        console.log(error);
+    }
+}

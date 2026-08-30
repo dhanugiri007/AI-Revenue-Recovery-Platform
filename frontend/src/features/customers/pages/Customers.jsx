@@ -31,6 +31,7 @@ const Customers = () => {
               {customer.customerType} <br />
               {customer.status} <br />
               {customer.totalRevenue}
+              <button onClick={() => navigate(`/get-customer-payments/${customer.id || customer._id}`)}>Get all Payments</button>
             </li>
           ))}
         </ul>

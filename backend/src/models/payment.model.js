@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-const paymentSchema = new mongooseSchema({
+const paymentSchema = new mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref : 'Customer',

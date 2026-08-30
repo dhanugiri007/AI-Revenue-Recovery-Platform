@@ -5,6 +5,7 @@ import Login from  './features/auth/pages/Login.jsx';
 import CreateCustomer from './features/customers/pages/CreateCustomer.jsx';
 import Home from './features/Home.jsx';
 import Customer from './features/customers/pages/Customers.jsx';
+import Payment from './features/customers/pages/Payment.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -26,5 +27,10 @@ export const router = createBrowserRouter([
     {
         path: '/get-customers',
         element : <Protected><Customer/></Protected>
+    },
+    {
+       
+        path: '/get-customer-payments/:customerId',
+       element : <Protected><Payment/> </Protected>
     }
 ]);

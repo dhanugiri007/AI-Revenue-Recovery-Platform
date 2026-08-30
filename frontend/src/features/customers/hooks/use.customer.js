@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import { CustomerContext } from "../customer.context.jsx";
-import { createCustomer,getCustomers } from "../service/customer.api.js";
+import { createCustomer,getCustomers,getPayments } from "../service/customer.api.js";
 
 
 
 export const useCustomer = () => {
 
     const context = useContext(CustomerContext)
-    const {customer, setCustomer , loading, setloading,customers,setCustomers } = context
+    const {customer, setCustomer , loading, setloading,customers,setCustomers,payments,setPayments } = context
 
 
     const handleCreateCustomer = async ({ name,email,phone,customerType }) => {
@@ -37,8 +37,22 @@ export const useCustomer = () => {
         }
     }
 
+    const handlePaymentList = async (customerId) => {
+        setloading(true);
+        try {
+            const data = await getPayments(customerId);
+
+            setPayments(data);
+        }catch(err) {
+
+        }
+        finally {
+            setloading(false);
+        }
+    }
+
     
     
 
-    return { handleCreateCustomer,customer,loading,customers,handleCustomerList }
+    return { handleCreateCustomer,customer,loading,customers,handleCustomerList,handlePaymentList,payments }
 }
