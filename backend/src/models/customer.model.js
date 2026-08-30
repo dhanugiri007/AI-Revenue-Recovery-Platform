@@ -13,13 +13,16 @@ const customerSchema = new mongoose.Schema({
     email : {
         type: String,
         required: true,
+        match : [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'pls enter valid email']
     },
     phone : {
-        type: String
+        type: String,
+       
+        match : [/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/, 'pls enter valid number']
     },
     stripeCustomerId : {
         type: String,
-        requried : true
+        required : true 
     },
     status : {
         type: String,
@@ -34,11 +37,11 @@ const customerSchema = new mongoose.Schema({
         type: Date,
         default : Date.now,
     }
-    
 }, {
     timestamps : true
-})
+});
 
-const customerModel = mongoose.model('Cutomer',customerSchema);
 
-module.exports = customerModel
+const customerModel = mongoose.model('Customer', customerSchema);
+
+module.exports = customerModel;
