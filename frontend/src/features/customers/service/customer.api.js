@@ -18,3 +18,13 @@ export async function createCustomer({name,email,phone,stripeCustomerId}) {
         
     }
 }
+
+export async function getCustomers() {
+    try {
+        const response = await api.get('/api/customer/get-customers');
+
+        return response.data;
+    }catch(error) {
+        console.log(error);
+    }
+}

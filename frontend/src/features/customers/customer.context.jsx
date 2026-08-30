@@ -7,10 +7,10 @@ export const CustomerContext = createContext();
 export const CustomerProvider = ({children}) => {
     const [loading, setloading] = useState(false);
     const [customer,setcustomer] = useState(null);
-
+    const [customers,setCustomers] = useState([]);
     
     return (
-        <CustomerContext.Provider value={({loading,setloading,customer,setcustomer})}>
+        <CustomerContext.Provider value={({loading,setloading,customer,setcustomer,customers,setCustomers})}>
             {children}
         </CustomerContext.Provider>
     )
