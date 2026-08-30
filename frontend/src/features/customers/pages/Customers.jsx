@@ -28,7 +28,7 @@ const Customers = () => {
               <strong>{customer.name}</strong> <br />
               {customer.email} <br />
               {customer.phone} <br />
-              {customer.stripeCustomerId} <br />
+              {customer.customerType} <br />
               {customer.status} <br />
               {customer.totalRevenue}
             </li>

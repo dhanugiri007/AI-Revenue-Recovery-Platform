@@ -1,12 +1,12 @@
 const customerModel = require('../models/customer.model');
-
+const paymentModel = require('../models/payment.model');
 
 async function createCustomer(req,res) {
 
     try {
-        const {name, email, phone,stripeCustomerId} = req.body;
+        const {name, email, phone,customerType} = req.body;
 
-        if(!name || !email || !phone || !stripeCustomerId) {
+        if(!name || !email || !phone || !customerType) {
             return res.status(400).json ({
                 message: 'All fields are required'
             })
@@ -24,7 +24,7 @@ async function createCustomer(req,res) {
         const userId = req.user.id;
 
         const customer = await customerModel.create({
-            name,email,phone,stripeCustomerId,userId
+            name,email,phone,customerType,userId
         });
 
         return res.status(201).json({
@@ -76,4 +76,21 @@ async function deleteCustomer (req,res) {
     })
   }
 }
-module.exports = {createCustomer,getAllCustomer,deleteCustomer}
+
+async function getCustomerPayment(req,res) {
+    try {
+        const {id} = req.params;
+
+        const payments = await paymentModel.find({customerId: id});
+
+        if (!payments || payments.length === 0) {
+            return res.status(404).json({ message: "No payments found for this customer." });
+        }
+
+        res.status(200).json(payments);
+    }
+    catch(error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+module.exports = {createCustomer,getAllCustomer,deleteCustomer,getCustomerPayment};

@@ -10,10 +10,10 @@ export const useCustomer = () => {
     const {customer, setCustomer , loading, setloading,customers,setCustomers } = context
 
 
-    const handleCreateCustomer = async ({ name,email,phone,stripeCustomerId }) => {
+    const handleCreateCustomer = async ({ name,email,phone,customerType }) => {
         setloading(true)
         try {
-            const data = await createCustomer({ name,email,phone,stripeCustomerId })
+            const data = await createCustomer({ name,email,phone,customerType })
             setCustomer(data.customer)
         } catch (err) {
 

@@ -5,10 +5,10 @@ const api = axios.create({
    withCredentials : true
 });
 
-export async function createCustomer({name,email,phone,stripeCustomerId}) {
+export async function createCustomer({name,email,phone,customerType}) {
     try {
         const response  = await api.post('/api/customer/create-customer', {
-            name,email,phone,stripeCustomerId
+            name,email,phone,customerType
         })
 
         return response.data;

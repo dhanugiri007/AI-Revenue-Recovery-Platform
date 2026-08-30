@@ -9,5 +9,7 @@ const router = express();
 router.post('/create-customer',authMiddleware.protect,customerController.createCustomer);
 router.get('/get-customers',authMiddleware.protect,customerController.getAllCustomer);
 router.delete('delete-customer',authMiddleware.protect, customerController.deleteCustomer);
+router.get('/get-customer-payments',authMiddleware.protect,customerController.getCustomerPayment);
+
 
 module.exports = router;

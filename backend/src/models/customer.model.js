@@ -20,9 +20,10 @@ const customerSchema = new mongoose.Schema({
        
         match : [/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/, 'pls enter valid number']
     },
-    stripeCustomerId : {
-        type: String,
-        required : true 
+    customerType : {
+        type : String,
+        required: true,
+        enum: ["individual","business"]
     },
     status : {
         type: String,

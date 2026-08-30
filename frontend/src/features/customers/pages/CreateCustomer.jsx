@@ -7,7 +7,7 @@ const CreateCustomer = () => {
     name: '',
     email: '',
     phone: '',
-    stripeCustomerId: '',
+    customerType: '',
   })
 
    const { loading, handleCreateCustomer} = useCustomer();
@@ -29,7 +29,7 @@ const data = await handleCreateCustomer({
   name: formData.name,
   email: formData.email,
   phone: formData.phone,
-  stripeCustomerId: formData.stripeCustomerId,
+  customerType: formData.customerType,
 });
     console.log(data);
     
