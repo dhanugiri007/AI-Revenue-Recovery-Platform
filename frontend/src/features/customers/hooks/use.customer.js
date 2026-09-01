@@ -1,22 +1,21 @@
 import { useContext } from "react";
 import { CustomerContext } from "../customer.context.jsx";
-import { createCustomer,getCustomers,getPayments } from "../service/customer.api.js";
-
-
+import { createCustomer, getCustomers, getPayments } from "../service/customer.api.js";
 
 export const useCustomer = () => {
 
     const context = useContext(CustomerContext)
-    const {customer, setCustomer , loading, setloading,customers,setCustomers,payments,setPayments } = context
+    const { customer, setCustomer, loading, setloading, customers, setCustomers, payments, setPayments } = context
 
-
-    const handleCreateCustomer = async ({ name,email,phone,customerType }) => {
+    const handleCreateCustomer = async ({ name, email, phone, customerType }) => {
         setloading(true)
         try {
-            const data = await createCustomer({ name,email,phone,customerType })
+            const data = await createCustomer({ name, email, phone, customerType })
             setCustomer(data.customer)
+            return data
         } catch (err) {
-
+            console.log("Create customer failed:", err)
+            return null
         } finally {
             setloading(false)
         }
@@ -25,14 +24,13 @@ export const useCustomer = () => {
     const handleCustomerList = async () => {
         setloading(true);
         try {
-           const data = await getCustomers();
-          
-           setCustomers(data.customers);
-
-        }catch(err) {
-
-        }
-        finally {
+            const data = await getCustomers();
+            setCustomers(data.customers);
+            return data
+        } catch (err) {
+            console.log("Fetch customers failed:", err)
+            return null
+        } finally {
             setloading(false);
         }
     }
@@ -41,18 +39,15 @@ export const useCustomer = () => {
         setloading(true);
         try {
             const data = await getPayments(customerId);
-
             setPayments(data);
-        }catch(err) {
-
-        }
-        finally {
+            return data
+        } catch (err) {
+            console.log("Fetch payments failed:", err)
+            return null
+        } finally {
             setloading(false);
         }
     }
 
-    
-    
-
-    return { handleCreateCustomer,customer,loading,customers,handleCustomerList,handlePaymentList,payments }
+    return { handleCreateCustomer, customer, loading, customers, handleCustomerList, handlePaymentList, payments }
 }

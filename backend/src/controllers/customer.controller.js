@@ -59,22 +59,22 @@ async function getAllCustomer(req,res) {
 }
 
 
-async function deleteCustomer (req,res) {
+async function deleteCustomer (req, res) {
     try {
-    const { id } = req.params;
-    const deletedItem = await Item.findByIdAndDelete(id);
+        const { id } = req.params;
+        const deletedItem = await customerModel.findByIdAndDelete(id);
 
-    if (!deletedItem) {
-      return res.status(404).json({ message: 'Item not found' });
+        if (!deletedItem) {
+            return res.status(404).json({ message: 'Customer not found' });
+        }
+
+        res.status(200).json({ message: 'Customer deleted successfully', id });
+    } catch (error) {
+        console.log('customer delete error :', error);
+        res.status(500).json({
+            message: 'internal server error'
+        })
     }
-
-    res.status(200).json({ message: 'Item deleted successfully', id });
-  } catch (error) {
-    console.log('customer delete error :', error);
-    res.status(500).json({
-        message : 'internal server error'
-    })
-  }
 }
 
 async function getCustomerPayment(req,res) {

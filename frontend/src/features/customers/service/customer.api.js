@@ -2,20 +2,20 @@ import axios from 'axios';
 
 const api = axios.create({
    baseURL: "http://localhost:3000",
-   withCredentials : true
+   withCredentials: true
 });
 
-export async function createCustomer({name,email,phone,customerType}) {
+export async function createCustomer({ name, email, phone, customerType }) {
     try {
-        const response  = await api.post('/api/customer/create-customer', {
-            name,email,phone,customerType
-        })
+        const response = await api.post('/api/customer/create-customer', {
+            name, email, phone, customerType
+        });
 
         return response.data;
-        
-    }catch(error) {
+
+    } catch (error) {
         console.log(error);
-        
+        throw error;
     }
 }
 
@@ -24,11 +24,11 @@ export async function getCustomers() {
         const response = await api.get('/api/customer/get-customers');
 
         return response.data;
-    }catch(error) {
+    } catch (error) {
         console.log(error);
+        throw error;
     }
 }
-
 
 export async function getPayments(customerId) {
     try {
@@ -36,7 +36,8 @@ export async function getPayments(customerId) {
 
         return response.data;
 
-    }catch(err) {
+    } catch (error) {
         console.log(error);
+        throw error;
     }
 }

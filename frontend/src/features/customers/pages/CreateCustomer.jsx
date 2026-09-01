@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useCustomer } from '../hooks/use.customer';
-import {useNavigate,Link} from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 const CreateCustomer = () => {
   const [formData, setFormData] = useState({
@@ -9,9 +9,10 @@ const CreateCustomer = () => {
     phone: '',
     customerType: '',
   })
+  const [error, setError] = useState('')
 
-   const { loading, handleCreateCustomer} = useCustomer();
-    const navigate = useNavigate() 
+  const { loading, handleCreateCustomer } = useCustomer();
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -24,26 +25,30 @@ const CreateCustomer = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-const data = await handleCreateCustomer({
-  name: formData.name,
-  email: formData.email,
-  phone: formData.phone,
-  customerType: formData.customerType,
-});
-    console.log(data);
-    
-    navigate('/get-customers')
+    setError('')
+
+    const data = await handleCreateCustomer({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      customerType: formData.customerType,
+    });
+
+    if (data?.customer) {
+      navigate('/get-customers')
+    } else {
+      setError('Failed to create customer. Please check the form and try again.')
+    }
   }
 
-  if(loading){
-        return (<main><h1>Loading.......</h1></main>)
-    }
-
+  if (loading) {
+    return (<main><h1>Loading.......</h1></main>)
+  }
 
   return (
     <main>
       <div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="name">Name</label>
@@ -82,15 +87,17 @@ const data = await handleCreateCustomer({
           </div>
 
           <div>
-            <label htmlFor="stripeCustomerId">Stripe Customer ID</label>
-            <input
-              type="text"
-              id="stripeCustomerId"
-              name="stripeCustomerId"
-              value={formData.stripeCustomerId}
+            <label htmlFor="customerType">Customer Type</label>
+            <select
+              id="customerType"
+              name="customerType"
+              value={formData.customerType}
               onChange={handleChange}
-              placeholder="e.g. cus_123456789"
-            />
+            >
+              <option value="">Select type</option>
+              <option value="individual">Individual</option>
+              <option value="business">Business</option>
+            </select>
           </div>
 
           <button type="submit">Create Customer</button>
