@@ -1,6 +1,8 @@
 const paymentModel = require('../models/payment.model');
 const customerModel = require('../models/customer.model');
 const recoveryCaseModel = require('../models/recoveryCase.model');
+const { processRecoveryCase } = require('../services/agent.service');
+
 const crypto = require('crypto');
 
 const PAYMENT_METHODS = ["credit_card", "debit_card", "upi", "netbanking", "wallet", "cod"];
@@ -74,6 +76,11 @@ async function generatePayment(req, res) {
                 paymentId: payment._id,
                 state: 'detected'
             });
+            // fire the agent asynchronously - don't block the HTTP response on it
+processRecoveryCase(recoveryCase._id).catch(err => {
+    console.log('Agent processing failed:', err.message);
+});
+
         } else {
             // Optional: if a customer succeeds, auto-resolve any open case
             // that might exist for them from a prior failure

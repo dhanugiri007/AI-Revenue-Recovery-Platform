@@ -10,7 +10,7 @@ const recoveryCaseSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Payment',
         required: true,
-        unique: true   // one case per payment - blocks duplicate case creation
+        unique: true
     },
     state: {
         type: String,
@@ -24,6 +24,9 @@ const recoveryCaseSchema = new mongoose.Schema({
     outreachCount: {
         type: Number,
         default: 0
+    },
+    lastActionAt: {
+        type: Date
     }
 }, {
     timestamps: true

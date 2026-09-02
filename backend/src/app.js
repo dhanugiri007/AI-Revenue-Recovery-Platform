@@ -3,7 +3,8 @@ const cookie = require('cookie-parser');
 const authRoutes = require('./routes/auth.route');
 const customerRoutes = require('./routes/customer.route');
 const paymentRoutes = require('./routes/payment.route');
-const policyRoutes = require('./routes/policy.route');   // NEW
+const policyRoutes = require('./routes/policy.route');
+const recoveryCaseRoutes = require('./routes/recoveryCase.route');   // NEW
 
 const cors = require('cors');
 
@@ -19,6 +20,7 @@ app.use(cors({
 app.use('/api/auth',authRoutes);
 app.use('/api/customer',customerRoutes);
 app.use('/api/payment', paymentRoutes);
-app.use('/api/policy', policyRoutes);   // NEW
+app.use('/api/policy', policyRoutes);
+app.use('/api/recovery-case', recoveryCaseRoutes);   // NEW
 
 module.exports = app;
