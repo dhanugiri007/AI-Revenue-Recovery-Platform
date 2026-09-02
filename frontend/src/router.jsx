@@ -7,6 +7,8 @@ import Home from './features/Home.jsx';
 import Customer from './features/customers/pages/Customers.jsx';
 import Payment from './features/customers/pages/Payment.jsx';
 import Policies from './features/policies/pages/PolicyUpload.jsx'
+import RecoveryCases from './features/recoveryCases/pages/RecoveryCases.jsx';
+
 export const router = createBrowserRouter([
     {
         path: '/login',
@@ -36,5 +38,9 @@ export const router = createBrowserRouter([
     {
     path: '/policies',
     element: <Protected><Policies/></Protected>
-}
+    },
+    {
+        path: "/recovery-cases/:customerId",
+        element : <Protected><RecoveryCases/></Protected>
+    }
 ]);

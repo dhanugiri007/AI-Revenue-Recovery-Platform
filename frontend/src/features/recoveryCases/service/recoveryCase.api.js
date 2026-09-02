@@ -1,0 +1,16 @@
+import axios from 'axios';
+
+const api = axios.create({
+   baseURL: "http://localhost:3000",
+   withCredentials: true
+});
+
+export async function getCasesByCustomer(customerId) {
+    const response = await api.get(`/api/recovery-case/customer/${customerId}`);
+    return response.data;
+}
+
+export async function getCaseAuditTrail(caseId) {
+    const response = await api.get(`/api/recovery-case/${caseId}/audit`);
+    return response.data;
+}
