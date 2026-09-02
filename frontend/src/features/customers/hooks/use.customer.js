@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { CustomerContext } from "../customer.context.jsx";
-import { createCustomer, getCustomers, getPayments } from "../service/customer.api.js";
+import { createCustomer, getCustomers, getPayments, generatePayment } from "../service/customer.api.js";
 
 export const useCustomer = () => {
 
@@ -49,5 +49,21 @@ export const useCustomer = () => {
         }
     }
 
-    return { handleCreateCustomer, customer, loading, customers, handleCustomerList, handlePaymentList, payments }
+    const handleGeneratePayment = async (customerId, status) => {
+        try {
+            const data = await generatePayment(customerId, status);
+            // refresh the list so the new payment shows up immediately
+            await handlePaymentList(customerId);
+            return data
+        } catch (err) {
+            console.log("Generate payment failed:", err)
+            return null
+        }
+    }
+
+    return {
+        handleCreateCustomer, customer, loading, customers,
+        handleCustomerList, handlePaymentList, payments,
+        handleGeneratePayment
+    }
 }

@@ -7,6 +7,11 @@ const paymentSchema = new mongoose.Schema({
         ref : 'Customer',
         required: true
     },
+    eventId: {
+        type: String,
+        required: true,
+        unique: true   // idempotency key - prevents duplicate payment/case creation
+    },
     amount : {
         type : Number,
         required: true
@@ -24,14 +29,14 @@ const paymentSchema = new mongoose.Schema({
     failureReason : {
         type : String,
         enum: ["card expired", "insufficient funds","bank declined","network error","invalid payment method","suspicious transaction","unknown"],
-        required: function() { return this.status === 'failed'; } 
+        required: function() { return this.status === 'failed'; }
     },
     paymentMethod : {
         type: String,
         enum : ["credit_card", "debit_card", "upi", "netbanking","wallet", "cod"],
         required: true
     },
-    attemptCount :{ 
+    attemptCount :{
         type: Number,
         required: true,
         default : 0
@@ -41,9 +46,9 @@ const paymentSchema = new mongoose.Schema({
         required: true
     },
     failedAt : {
-    type : Date,
-    required: function() { return this.status === 'failed'; }
-}
+        type : Date,
+        required: function() { return this.status === 'failed'; }   // FIX: was required:true for all
+    }
 
 }, {
     timestamps: true

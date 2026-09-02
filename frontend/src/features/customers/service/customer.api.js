@@ -41,3 +41,20 @@ export async function getPayments(customerId) {
         throw error;
     }
 }
+
+export async function generatePayment(customerId, status) {
+    try {
+        // client-generated idempotency key - unique per click
+        const eventId = crypto.randomUUID();
+
+        const response = await api.post(`/api/payment/generate/${customerId}`, {
+            status,
+            eventId
+        });
+
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

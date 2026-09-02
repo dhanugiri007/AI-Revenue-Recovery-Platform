@@ -1,21 +1,29 @@
 import React from 'react'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCustomer } from '../hooks/use.customer'
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Payment = () => {
 
-    const { payments = [], handlePaymentList, loading } = useCustomer();
+    const { payments = [], handlePaymentList, handleGeneratePayment, loading } = useCustomer();
     const navigate = useNavigate();
     const { customerId } = useParams();
+    const [generating, setGenerating] = useState(false);
 
     useEffect(() => {
-        console.log('customerId from URL:', customerId); // temporary debug log
         if (customerId) {
             handlePaymentList(customerId);
         }
-        
     }, [customerId]);
+
+    const onGenerate = async (status) => {
+        setGenerating(true);
+        try {
+            await handleGeneratePayment(customerId, status);
+        } finally {
+            setGenerating(false);
+        }
+    };
 
     if (loading) {
         return <h1>Loading...</h1>;
@@ -24,6 +32,15 @@ const Payment = () => {
     return (
         <div>
             <h1>Payments</h1>
+
+            <div style={{ marginBottom: '1rem', display: 'flex', gap: '10px' }}>
+                <button disabled={generating} onClick={() => onGenerate('success')}>
+                    {generating ? 'Generating...' : 'Generate Success Payment'}
+                </button>
+                <button disabled={generating} onClick={() => onGenerate('failed')}>
+                    {generating ? 'Generating...' : 'Generate Failed Payment'}
+                </button>
+            </div>
 
             {payments.length === 0 ? (
                 <p>No payments found</p>
