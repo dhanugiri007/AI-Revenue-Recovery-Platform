@@ -41,9 +41,9 @@ const paymentSchema = new mongoose.Schema({
         required: true
     },
     failedAt : {
-        type : Date,
-        required: true
-    }
+    type : Date,
+    required: function() { return this.status === 'failed'; }
+}
 
 }, {
     timestamps: true
