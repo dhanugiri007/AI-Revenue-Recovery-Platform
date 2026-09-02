@@ -6,7 +6,7 @@ import CreateCustomer from './features/customers/pages/CreateCustomer.jsx';
 import Home from './features/Home.jsx';
 import Customer from './features/customers/pages/Customers.jsx';
 import Payment from './features/customers/pages/Payment.jsx';
-
+import Policies from './features/policies/pages/PolicyUpload.jsx'
 export const router = createBrowserRouter([
     {
         path: '/login',
@@ -32,5 +32,9 @@ export const router = createBrowserRouter([
        
         path: '/get-customer-payments/:customerId',
        element : <Protected><Payment/> </Protected>
-    }
+    },
+    {
+    path: '/policies',
+    element: <Protected><Policies/></Protected>
+}
 ]);

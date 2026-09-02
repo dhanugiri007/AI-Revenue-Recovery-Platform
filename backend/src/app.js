@@ -2,7 +2,8 @@ const express = require('express');
 const cookie = require('cookie-parser');
 const authRoutes = require('./routes/auth.route');
 const customerRoutes = require('./routes/customer.route');
-const paymentRoutes = require('./routes/payment.route');   // NEW
+const paymentRoutes = require('./routes/payment.route');
+const policyRoutes = require('./routes/policy.route');   // NEW
 
 const cors = require('cors');
 
@@ -17,6 +18,7 @@ app.use(cors({
 
 app.use('/api/auth',authRoutes);
 app.use('/api/customer',customerRoutes);
-app.use('/api/payment', paymentRoutes);   // NEW
+app.use('/api/payment', paymentRoutes);
+app.use('/api/policy', policyRoutes);   // NEW
 
 module.exports = app;
