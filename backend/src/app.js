@@ -9,6 +9,7 @@ const customerRoutes = require('./routes/customer.route');
 const paymentRoutes = require('./routes/payment.route');
 const policyRoutes = require('./routes/policy.route');
 const recoveryCaseRoutes = require('./routes/recoveryCase.route');
+const dashboardRoutes = require('./routes/dashboard')
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use('/api/customer',customerRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/policy', policyRoutes);
 app.use('/api/recovery-case', recoveryCaseRoutes);
+app.use('/api/dashboard', dashboardRoutes); 
 
 module.exports = app;

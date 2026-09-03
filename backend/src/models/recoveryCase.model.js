@@ -17,21 +17,16 @@ const recoveryCaseSchema = new mongoose.Schema({
         enum: ['detected', 'analyzing', 'action_taken', 'resolved', 'escalated'],
         default: 'detected'
     },
-    retryCount: {
-        type: Number,
-        default: 0
+    retryCount: { type: Number, default: 0 },
+    outreachCount: { type: Number, default: 0 },
+    lastActionAt: { type: Date },
+    escalationReason: { type: String },          
+    resolvedBy: {                                  
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    outreachCount: {
-        type: Number,
-        default: 0
-    },
-    lastActionAt: {
-        type: Date
-    }
-}, {
-    timestamps: true
-});
+    resolvedAt: { type: Date },                    
+    resolutionNote: { type: String }                
+}, { timestamps: true });
 
-const recoveryCaseModel = mongoose.model('RecoveryCase', recoveryCaseSchema);
-
-module.exports = recoveryCaseModel;
+module.exports = mongoose.model('RecoveryCase', recoveryCaseSchema);
