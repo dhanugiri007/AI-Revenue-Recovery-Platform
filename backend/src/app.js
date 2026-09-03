@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(cookie());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URI,
     credentials: true
 }));
 
