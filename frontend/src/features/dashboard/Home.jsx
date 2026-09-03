@@ -1,24 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useDashboard } from './hooks/use.dashboard';
 
 const Home = () => {
-  /*
-    Replace these values with your actual dashboard API data.
+  
+  const { dashboardData, loading } = useDashboard();
 
-    Example:
-    const { dashboardData, loading } = useDashboard();
-  */
-  const dashboardData = {
-    totalCustomers: 0,
-    totalPayments: 0,
-    failedPayments: 0,
-    activeCases: 0,
-    recoveredRevenue: 0,
-    recoveryRate: 0,
-    paymentTrend: [],
-    recoveryByStatus: [],
-  };
-
+if (loading) {
+    return (
+        <main className="min-h-screen bg-black text-white flex items-center justify-center">
+            <p className="text-zinc-500 text-sm">Loading dashboard...</p>
+        </main>
+    );
+}
   const navItems = [
     {
       name: 'Overview',
@@ -63,8 +57,8 @@ const Home = () => {
       ),
     },
     {
-      name: 'Audit Trail',
-      path: '/audit-trail',
+      name: 'Escalations',
+      path: '/escalations',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
