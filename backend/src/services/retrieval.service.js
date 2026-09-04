@@ -4,12 +4,13 @@ const policyModel = require('../models/policy.model');
 
 /**
  * Retrieve the top-k most relevant policy chunks for a given query,
- * restricted to currently ACTIVE policies only.
+ * restricted to currently ACTIVE policies belonging to this user only.
  * @param {string} queryText - e.g. a summary of the recovery case
  * @param {number} topK
+ * @param {string} userId - only this user's active policies are eligible
  */
-async function retrieveRelevantPolicies(queryText, topK = 5) {
-    const activePolicies = await policyModel.find({ active: true }, '_id');
+async function retrieveRelevantPolicies(queryText, topK = 5, userId) {
+    const activePolicies = await policyModel.find({ active: true, userId }, '_id');
     const activePolicyIds = activePolicies.map(p => p._id.toString());
 
     if (activePolicyIds.length === 0) {
@@ -25,7 +26,6 @@ async function retrieveRelevantPolicies(queryText, topK = 5) {
         where: { policyId: { "$in": activePolicyIds } }
     });
 
-    // Flatten Chroma's result shape into simple chunk objects
     const documents = results.documents?.[0] || [];
     const metadatas = results.metadatas?.[0] || [];
     const ids = results.ids?.[0] || [];
