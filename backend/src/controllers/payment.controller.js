@@ -18,6 +18,7 @@ async function generatePayment(req, res) {
     try {
         const { customerId } = req.params;
         const { status, eventId } = req.body;
+        const userId = req.user.id;
 
         if (!['success', 'failed'].includes(status)) {
             return res.status(400).json({ message: "status must be 'success' or 'failed'" });
@@ -26,7 +27,7 @@ async function generatePayment(req, res) {
             return res.status(400).json({ message: "eventId is required" });
         }
 
-        const customer = await customerModel.findById(customerId);
+        const customer = await customerModel.findOne({ _id: customerId, userId });
         if (!customer) {
             return res.status(404).json({ message: "Customer not found" });
         }
@@ -50,6 +51,7 @@ async function generatePayment(req, res) {
 
         const paymentData = {
             customerId,
+            userId,
             eventId,
             amount,
             currency: 'INR',
@@ -73,6 +75,7 @@ async function generatePayment(req, res) {
             // enforced at the schema level via unique paymentId)
             recoveryCase = await recoveryCaseModel.create({
                 customerId,
+                userId,
                 paymentId: payment._id,
                 state: 'detected'
             });
@@ -82,12 +85,15 @@ processRecoveryCase(recoveryCase._id).catch(err => {
 });
 
         } else {
-            // Optional: if a customer succeeds, auto-resolve any open case
-            // that might exist for them from a prior failure
-            await recoveryCaseModel.updateMany(
-                { customerId, state: { $nin: ['resolved', 'escalated'] } },
-                { $set: { state: 'resolved' } }
-            );
+             const openCases = await recoveryCaseModel.find({
+                customerId,
+                userId,
+                state: { $nin: ['resolved', 'escalated'] }
+            });
+            if (openCases.length === 1) {
+                openCases[0].state = 'resolved';
+                await openCases[0].save();
+            }
         }
 
         return res.status(201).json({

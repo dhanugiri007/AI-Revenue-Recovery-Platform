@@ -39,11 +39,13 @@ async function registerUserController (req,res) {
             {expiresIn: '1d'}
         );
 
-         const cookieOptions = {
-            httpOnly: true, 
-            secure: false, 
-            sameSite: 'lax', 
-            maxAge: 24 * 60 * 60 * 1000 
+         const isProd = process.env.NODE_ENV === 'production';
+        
+        const cookieOptions = {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        maxAge: 24 * 60 * 60 * 1000
         };
 
         res.cookie('token',token,cookieOptions);
@@ -96,17 +98,23 @@ async function loginUserController(req, res) {
 
         const token = jwt.sign(
             { id: user._id },
-            process.env.JWT_SECRET || 'fallback_secret_key',
+            process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );
 
+        if (!process.env.JWT_SECRET) {
+        console.error('JWT_SECRET is not set. Refusing to start.');
+        process.exit(1);
+        }
         
-        const cookieOptions = {
-            httpOnly: true,
-            secure: false, 
-            sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
-        };
+        const isProd = process.env.NODE_ENV === 'production';
+
+const cookieOptions = {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000
+};
 
         res.cookie('token', token, cookieOptions);
 

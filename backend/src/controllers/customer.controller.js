@@ -40,56 +40,44 @@ async function createCustomer(req,res) {
     }
 }
 
-async function getAllCustomer(req,res) {
+async function getAllCustomer(req, res) {
     try {
-    const customers = await customerModel.find({});
-
-    return res.status(200).json({
-        message: 'sucessfully fetched all customers',
-        customers
-    });
-   } catch(error) {
-    console.log("Get customer error", error);
-
-    return res.status(500).json({
-        message : "internal server error"
-    });
-
-   }
+        const customers = await customerModel.find({ userId: req.user.id });
+        return res.status(200).json({ message: 'sucessfully fetched all customers', customers });
+    } catch (error) {
+        console.log("Get customer error", error);
+        return res.status(500).json({ message: "internal server error" });
+    }
 }
 
-
-async function deleteCustomer (req, res) {
+async function deleteCustomer(req, res) {
     try {
         const { id } = req.params;
-        const deletedItem = await customerModel.findByIdAndDelete(id);
+        const deletedItem = await customerModel.findOneAndDelete({ _id: id, userId: req.user.id });
 
         if (!deletedItem) {
             return res.status(404).json({ message: 'Customer not found' });
         }
-
         res.status(200).json({ message: 'Customer deleted successfully', id });
     } catch (error) {
         console.log('customer delete error :', error);
-        res.status(500).json({
-            message: 'internal server error'
-        })
+        res.status(500).json({ message: 'internal server error' });
     }
 }
 
-async function getCustomerPayment(req,res) {
+async function getCustomerPayment(req, res) {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
+        // ownership check on the customer first
+        const customer = await customerModel.findOne({ _id: id, userId: req.user.id });
+        if (!customer) return res.status(404).json({ message: "Customer not found" });
 
-        const payments = await paymentModel.find({customerId: id});
-
+        const payments = await paymentModel.find({ customerId: id, userId: req.user.id });
         if (!payments || payments.length === 0) {
             return res.status(404).json({ message: "No payments found for this customer." });
         }
-
         res.status(200).json(payments);
-    }
-    catch(error) {
+    } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 }

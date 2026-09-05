@@ -38,7 +38,7 @@ async function processRecoveryCase(caseId) {
     broadcastCaseState(recoveryCase);
 
     const queryText = `Payment failed. Reason: ${payment.failureReason}. Customer type: ${customer.customerType}. Amount: ${payment.amount}. Retry attempts so far: ${recoveryCase.retryCount}.`;
-    const policies = await retrieveRelevantPolicies(queryText, 5);
+    const policies = await retrieveRelevantPolicies(queryText, 5, recoveryCase.userId);
 
     await auditLogModel.create({
         recoveryCaseId: recoveryCase._id,
@@ -87,13 +87,26 @@ Decide the single next action for this case.
 
 async function executeAction(recoveryCase, payment, customer, decision) {
     if (decision.action === 'retryPayment') {
-        if (recoveryCase.retryCount >= MAX_RETRIES) {
+        // Atomically increment retryCount only if still under the limit.
+        // This closes a race condition where two concurrent calls to
+        // processRecoveryCase (e.g. the setTimeout re-check overlapping
+        // a duplicate trigger) could both read the same stale retryCount
+        // and both proceed, silently bypassing MAX_RETRIES.
+        const updatedCase = await recoveryCaseModel.findOneAndUpdate(
+            { _id: recoveryCase._id, retryCount: { $lt: MAX_RETRIES } },
+            { $inc: { retryCount: 1 }, $set: { lastActionAt: new Date() } },
+            { new: true }
+        );
+
+        if (!updatedCase) {
+            // Either already at the limit, or another in-flight call just claimed this retry slot.
             await auditLogModel.create({ recoveryCaseId: recoveryCase._id, step: 'guardrail_blocked', outcome: `Blocked retryPayment - max retries (${MAX_RETRIES}) already reached` });
             return await escalate(recoveryCase, 'Max retries reached - escalated instead');
         }
 
-        recoveryCase.retryCount += 1;
-        recoveryCase.lastActionAt = new Date();
+        // keep the in-memory object in sync with what was actually persisted
+        recoveryCase.retryCount = updatedCase.retryCount;
+        recoveryCase.lastActionAt = updatedCase.lastActionAt;
 
         // --- SIMULATED payment gateway call (no real gateway in this project) ---
         const succeeded = Math.random() < RETRY_SUCCESS_RATE;

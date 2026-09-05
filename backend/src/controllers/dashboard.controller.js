@@ -5,6 +5,7 @@ const recoveryCaseModel = require('../models/recoveryCase.model');
 // GET /api/dashboard/summary
 async function getDashboardSummary(req, res) {
     try {
+        const userId = req.user.id
         const [
             totalCustomers,
             totalPayments,
@@ -15,20 +16,20 @@ async function getDashboardSummary(req, res) {
             escalatedCases,
             allCases
         ] = await Promise.all([
-            customerModel.countDocuments({}),
-            paymentModel.countDocuments({}),
-            paymentModel.countDocuments({ status: 'failed' }),
-            paymentModel.find({ status: 'success' }),
-            recoveryCaseModel.countDocuments({ state: { $in: ['detected', 'analyzing', 'action_taken'] } }),
-            recoveryCaseModel.find({ state: 'resolved' }),
-            recoveryCaseModel.countDocuments({ state: 'escalated' }),
-            recoveryCaseModel.find({})
+            customerModel.countDocuments({ userId }),
+            paymentModel.countDocuments({ userId }),
+            paymentModel.countDocuments({ userId, status: 'failed' }),
+            paymentModel.countDocuments({ userId, status: 'success' }), // also fixed: see note below
+            recoveryCaseModel.countDocuments({ userId, state: { $in: ['detected', 'analyzing', 'action_taken'] } }),
+            recoveryCaseModel.find({ userId, state: 'resolved' }),
+            recoveryCaseModel.countDocuments({ userId, state: 'escalated' }),
+            recoveryCaseModel.find({ userId })
         ]);
 
         // Recovered revenue = sum of amounts on payments whose recovery case resolved
         // (i.e. a retry actually succeeded and flipped the payment to 'success')
         const resolvedPaymentIds = recoveredCases.map(c => c.paymentId.toString());
-        const resolvedPayments = await paymentModel.find({ _id: { $in: resolvedPaymentIds } });
+        const resolvedPayments = await paymentModel.find({ _id: { $in: resolvedPaymentIds },userId ,status: 'success'});
         const recoveredRevenue = resolvedPayments.reduce((sum, p) => sum + p.amount, 0);
 
         // Recovery rate = resolved cases / (resolved + escalated) - i.e. of all cases
@@ -43,7 +44,7 @@ async function getDashboardSummary(req, res) {
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
         sevenDaysAgo.setHours(0, 0, 0, 0);
 
-        const recentPayments = await paymentModel.find({ createdAt: { $gte: sevenDaysAgo } });
+       const recentPayments = await paymentModel.find({ userId, createdAt: { $gte: sevenDaysAgo } });
 
         const dayBuckets = {};
         for (let i = 0; i < 7; i++) {

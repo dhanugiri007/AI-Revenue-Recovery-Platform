@@ -63,10 +63,9 @@ async function uploadPolicy(req, res) {
     }
 }
 
-// GET /api/policy/list
 async function listPolicies(req, res) {
     try {
-        const policies = await policyModel.find({}).sort({ createdAt: -1 });
+        const policies = await policyModel.find({ userId: req.user.id }).sort({ createdAt: -1 });
         return res.status(200).json({ policies });
     } catch (error) {
         console.log("List policies error:", error);
@@ -74,19 +73,14 @@ async function listPolicies(req, res) {
     }
 }
 
-// PATCH /api/policy/:id/toggle  (activate/deactivate a policy version)
 async function togglePolicy(req, res) {
     try {
         const { id } = req.params;
-        const policy = await policyModel.findById(id);
-
-        if (!policy) {
-            return res.status(404).json({ message: "Policy not found" });
-        }
+        const policy = await policyModel.findOne({ _id: id, userId: req.user.id });
+        if (!policy) return res.status(404).json({ message: "Policy not found" });
 
         policy.active = !policy.active;
         await policy.save();
-
         return res.status(200).json({ message: "Policy status updated", policy });
     } catch (error) {
         console.log("Toggle policy error:", error);
@@ -94,15 +88,11 @@ async function togglePolicy(req, res) {
     }
 }
 
-// DELETE /api/policy/:id
 async function deletePolicy(req, res) {
     try {
         const { id } = req.params;
-        const policy = await policyModel.findByIdAndDelete(id);
-
-        if (!policy) {
-            return res.status(404).json({ message: "Policy not found" });
-        }
+        const policy = await policyModel.findOneAndDelete({ _id: id, userId: req.user.id });
+        if (!policy) return res.status(404).json({ message: "Policy not found" });
 
         const collection = await getCollection();
         await collection.delete({ where: { policyId: id } });
