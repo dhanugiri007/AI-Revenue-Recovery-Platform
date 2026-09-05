@@ -20,7 +20,11 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(generalLimiter);   // NEW - applies to all routes below
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+app.use(generalLimiter); 
 
 app.use('/api/auth',authRoutes);
 app.use('/api/customer',customerRoutes);
@@ -28,5 +32,6 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/policy', policyRoutes);
 app.use('/api/recovery-case', recoveryCaseRoutes);
 app.use('/api/dashboard', dashboardRoutes); 
+
 
 module.exports = app;
